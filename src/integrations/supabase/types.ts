@@ -14,16 +14,314 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      customers: {
+        Row: {
+          address: string | null
+          company: string | null
+          created_at: string
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          owner_id: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          owner_id: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          owner_id?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      employees: {
+        Row: {
+          created_at: string
+          department: string | null
+          email: string | null
+          full_name: string
+          hire_date: string | null
+          id: string
+          position: string | null
+          salary: number | null
+          status: Database["public"]["Enums"]["employee_status"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          department?: string | null
+          email?: string | null
+          full_name: string
+          hire_date?: string | null
+          id?: string
+          position?: string | null
+          salary?: number | null
+          status?: Database["public"]["Enums"]["employee_status"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          department?: string | null
+          email?: string | null
+          full_name?: string
+          hire_date?: string | null
+          id?: string
+          position?: string | null
+          salary?: number | null
+          status?: Database["public"]["Enums"]["employee_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      invoice_items: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          invoice_id: string
+          line_total: number | null
+          product_id: string | null
+          quantity: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          id?: string
+          invoice_id: string
+          line_total?: number | null
+          product_id?: string | null
+          quantity?: number
+          unit_price?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          invoice_id?: string
+          line_total?: number | null
+          product_id?: string | null
+          quantity?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_items_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          channel: string | null
+          created_at: string
+          customer_id: string
+          due_date: string | null
+          id: string
+          invoice_number: string
+          issue_date: string
+          notes: string | null
+          owner_id: string
+          status: Database["public"]["Enums"]["invoice_status"]
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          channel?: string | null
+          created_at?: string
+          customer_id: string
+          due_date?: string | null
+          id?: string
+          invoice_number: string
+          issue_date?: string
+          notes?: string | null
+          owner_id: string
+          status?: Database["public"]["Enums"]["invoice_status"]
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          channel?: string | null
+          created_at?: string
+          customer_id?: string
+          due_date?: string | null
+          id?: string
+          invoice_number?: string
+          issue_date?: string
+          notes?: string | null
+          owner_id?: string
+          status?: Database["public"]["Enums"]["invoice_status"]
+          total?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          created_at: string
+          customer_id: string | null
+          id: string
+          notes: string | null
+          owner_id: string
+          source: string | null
+          status: Database["public"]["Enums"]["lead_status"]
+          title: string
+          updated_at: string
+          value: number | null
+        }
+        Insert: {
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          notes?: string | null
+          owner_id: string
+          source?: string | null
+          status?: Database["public"]["Enums"]["lead_status"]
+          title: string
+          updated_at?: string
+          value?: number | null
+        }
+        Update: {
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          notes?: string | null
+          owner_id?: string
+          source?: string | null
+          status?: Database["public"]["Enums"]["lead_status"]
+          title?: string
+          updated_at?: string
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          low_stock_threshold: number
+          name: string
+          owner_id: string
+          price: number
+          sku: string
+          stock: number
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          low_stock_threshold?: number
+          name: string
+          owner_id: string
+          price?: number
+          sku: string
+          stock?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          low_stock_threshold?: number
+          name?: string
+          owner_id?: string
+          price?: number
+          sku?: string
+          stock?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      is_staff: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "manager" | "employee"
+      employee_status: "active" | "on_leave" | "terminated"
+      invoice_status: "draft" | "pending" | "paid" | "failed" | "refunded"
+      lead_status: "new" | "contacted" | "qualified" | "won" | "lost"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +448,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "manager", "employee"],
+      employee_status: ["active", "on_leave", "terminated"],
+      invoice_status: ["draft", "pending", "paid", "failed", "refunded"],
+      lead_status: ["new", "contacted", "qualified", "won", "lost"],
+    },
   },
 } as const
