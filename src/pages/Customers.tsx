@@ -17,7 +17,7 @@ export default function Customers() {
   async function load() {
     setLoading(true);
     try {
-      const data = await api.customers.list<Customer[]>();
+      const data = (await api.customers.list()) as Customer[];
       setItems(data ?? []);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed to load");
