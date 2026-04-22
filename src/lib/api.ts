@@ -16,7 +16,8 @@ async function ownerId(): Promise<string> {
   return data.user.id;
 }
 
-async function run<T>(builder: { then: (...args: unknown[]) => unknown }): Promise<T> {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function run<T>(builder: any): Promise<T> {
   const { data, error } = (await builder) as { data: T; error: { message: string } | null };
   if (error) throw new Error(error.message);
   return data;
