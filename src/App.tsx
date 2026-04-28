@@ -7,10 +7,14 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ThemeProvider } from "@/hooks/useTheme";
 import { DashboardConfigProvider } from "@/hooks/useDashboardConfig";
+import { AppLayout } from "@/components/layout/AppLayout";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Auth from "./pages/Auth.tsx";
 import Customers from "./pages/Customers.tsx";
+import Leads from "./pages/Leads.tsx";
+import Products from "./pages/Products.tsx";
+import Invoices from "./pages/Invoices.tsx";
 
 const queryClient = new QueryClient();
 
@@ -25,9 +29,13 @@ const App = () => (
             <DashboardConfigProvider>
               <Routes>
                 <Route path="/auth" element={<Auth />} />
-                <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-                <Route path="/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
-                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/leads" element={<Leads />} />
+                  <Route path="/customers" element={<Customers />} />
+                  <Route path="/products" element={<Products />} />
+                  <Route path="/invoices" element={<Invoices />} />
+                </Route>
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </DashboardConfigProvider>
