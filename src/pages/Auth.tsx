@@ -6,7 +6,7 @@ import { authSchema } from "@/lib/validation";
 import { toast } from "sonner";
 
 export default function Auth() {
-  const { user, loading } = useAuth();
+  const { user, loading, enterDemo } = useAuth();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -57,7 +57,7 @@ export default function Auth() {
             {mode === "signin" ? "Sign in" : "Create account"}
           </h1>
           <p className="text-xs text-muted-foreground mt-1">
-            Access the Nexus ERP dashboard.
+            Access the System Dashboard.
           </p>
         </header>
         <div className="space-y-2">
@@ -94,6 +94,24 @@ export default function Auth() {
           className="w-full text-xs text-muted-foreground hover:text-foreground"
         >
           {mode === "signin" ? "No account? Sign up" : "Already have an account? Sign in"}
+        </button>
+        <div className="relative my-1">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-border" />
+          </div>
+          <div className="relative flex justify-center">
+            <span className="bg-card px-2 text-2xs text-muted-foreground uppercase tracking-wider">or</span>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            enterDemo();
+            navigate("/", { replace: true });
+          }}
+          className="w-full h-9 rounded-md border border-border bg-muted/40 text-sm font-medium text-foreground hover:bg-muted"
+        >
+          Continue as demo
         </button>
       </form>
     </div>
