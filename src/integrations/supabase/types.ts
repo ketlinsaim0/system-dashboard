@@ -282,6 +282,39 @@ export type Database = {
         }
         Relationships: []
       }
+      system_metrics: {
+        Row: {
+          cpu: number
+          created_at: string
+          disk: number
+          id: string
+          memory: number
+          network_in: number
+          network_out: number
+          user_id: string
+        }
+        Insert: {
+          cpu: number
+          created_at?: string
+          disk?: number
+          id?: string
+          memory: number
+          network_in?: number
+          network_out?: number
+          user_id: string
+        }
+        Update: {
+          cpu?: number
+          created_at?: string
+          disk?: number
+          id?: string
+          memory?: number
+          network_in?: number
+          network_out?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -299,6 +332,27 @@ export type Database = {
           created_at?: string
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_settings: {
+        Row: {
+          config: Json
+          created_at: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
