@@ -2,46 +2,71 @@ import { createContext, useContext, useEffect, useRef, useState, ReactNode } fro
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
-export type WidgetKey = "cpu" | "memory" | "network" | "disk" | "chart" | "logs";
+export type WidgetKey =
+  | "kpi_revenue"
+  | "kpi_leads"
+  | "kpi_customers"
+  | "kpi_lowstock"
+  | "chart_pipeline"
+  | "chart_revenue"
+  | "recent_leads"
+  | "low_stock";
 
 export type DashboardConfig = {
   titles: Record<WidgetKey, string>;
   visible: Record<WidgetKey, boolean>;
-  thresholds: Record<"cpu" | "memory" | "disk", { warn: number; crit: number }>;
-  refreshMs: number;
+  order: WidgetKey[];
 };
+
+export const ALL_WIDGETS: WidgetKey[] = [
+  "kpi_revenue",
+  "kpi_leads",
+  "kpi_customers",
+  "kpi_lowstock",
+  "chart_pipeline",
+  "chart_revenue",
+  "recent_leads",
+  "low_stock",
+];
 
 export const DEFAULT_CONFIG: DashboardConfig = {
   titles: {
-    cpu: "CPU Usage",
-    memory: "Memory",
-    network: "Network",
-    disk: "Disk",
-    chart: "Resource Timeline",
-    logs: "Activity Logs",
+    kpi_revenue: "Total Revenue",
+    kpi_leads: "Active Leads",
+    kpi_customers: "Customers",
+    kpi_lowstock: "Low Stock",
+    chart_pipeline: "Sales Pipeline",
+    chart_revenue: "Monthly Revenue",
+    recent_leads: "Recent Leads",
+    low_stock: "Low Stock Items",
   },
-  visible: { cpu: true, memory: true, network: true, disk: true, chart: true, logs: true },
-  thresholds: {
-    cpu: { warn: 65, crit: 85 },
-    memory: { warn: 70, crit: 88 },
-    disk: { warn: 75, crit: 90 },
+  visible: {
+    kpi_revenue: true,
+    kpi_leads: true,
+    kpi_customers: true,
+    kpi_lowstock: true,
+    chart_pipeline: true,
+    chart_revenue: true,
+    recent_leads: true,
+    low_stock: true,
   },
-  refreshMs: 2000,
+  order: [...ALL_WIDGETS],
 };
 
 const STORAGE_KEY = "sysdash:config";
 
 function merge(base: DashboardConfig, partial: Partial<DashboardConfig> | null | undefined): DashboardConfig {
   if (!partial) return base;
+  // Preserve only keys that exist in current schema (keeps state fresh after refactors)
+  const order = Array.isArray(partial.order)
+    ? (partial.order.filter((k): k is WidgetKey => ALL_WIDGETS.includes(k as WidgetKey)))
+    : base.order;
+  // Append any new widgets that the persisted state didn't know about
+  const orderComplete = [...order, ...ALL_WIDGETS.filter((k) => !order.includes(k))];
   return {
     titles: { ...base.titles, ...(partial.titles ?? {}) },
     visible: { ...base.visible, ...(partial.visible ?? {}) },
-    thresholds: {
-      cpu: { ...base.thresholds.cpu, ...(partial.thresholds?.cpu ?? {}) },
-      memory: { ...base.thresholds.memory, ...(partial.thresholds?.memory ?? {}) },
-      disk: { ...base.thresholds.disk, ...(partial.thresholds?.disk ?? {}) },
-    },
-    refreshMs: partial.refreshMs ?? base.refreshMs,
+    order: orderComplete,
   };
 }
 
