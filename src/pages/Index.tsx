@@ -9,6 +9,7 @@ import {
   Settings2,
   RefreshCw,
   Inbox,
+  Sparkles,
 } from "lucide-react";
 import {
   Bar,
@@ -31,6 +32,8 @@ import { LayoutSettingsDrawer } from "@/components/erp/LayoutSettingsDrawer";
 import { useAuth } from "@/hooks/useAuth";
 import { useDashboardConfig, type WidgetKey } from "@/hooks/useDashboardConfig";
 import { api } from "@/lib/api";
+import { seedDemoData } from "@/lib/seedDemo";
+import { toast } from "sonner";
 import { fmtCurrency, fmtNumber } from "@/lib/format";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { LeadStatus } from "@/components/erp/StatusBadge";
@@ -59,6 +62,7 @@ export default function Index() {
   const { config } = useDashboardConfig();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [seeding, setSeeding] = useState(false);
   const [leads, setLeads] = useState<Lead[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
@@ -84,6 +88,20 @@ export default function Index() {
   useEffect(() => {
     load();
   }, []);
+
+  async function seed() {
+    if (seeding) return;
+    setSeeding(true);
+    try {
+      await seedDemoData();
+      toast.success("Demo data added");
+      await load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Failed to seed demo data");
+    } finally {
+      setSeeding(false);
+    }
+  }
 
   const totalRevenue = useMemo(
     () => invoices.filter((i) => i.status === "paid").reduce((s, i) => s + Number(i.total ?? 0), 0),
@@ -275,6 +293,12 @@ export default function Index() {
 
   const orderedVisible = config.order.filter((k) => config.visible[k]);
   const greeting = isDemo ? "Welcome to the demo" : `Welcome back, ${user?.email?.split("@")[0] ?? "there"}`;
+  const isEmpty =
+    !loading &&
+    leads.length === 0 &&
+    customers.length === 0 &&
+    products.length === 0 &&
+    invoices.length === 0;
 
   return (
     <>
@@ -283,6 +307,14 @@ export default function Index() {
         subtitle={greeting}
         actions={
           <>
+            <button
+              onClick={seed}
+              disabled={seeding}
+              className="h-8 px-2.5 inline-flex items-center gap-1.5 text-xs rounded-md border bg-card hover:bg-muted text-foreground disabled:opacity-60"
+              title="Populate sample customers, leads, products and invoices"
+            >
+              <Sparkles className="h-3.5 w-3.5" /> {seeding ? "Seeding…" : "Seed demo data"}
+            </button>
             <button
               onClick={load}
               className="h-8 px-2.5 inline-flex items-center gap-1.5 text-xs rounded-md border bg-card hover:bg-muted text-foreground"
@@ -312,6 +344,14 @@ export default function Index() {
               {Array.from({ length: 4 }).map((_, i) => (
                 <Skeleton key={i} className="h-24 rounded-xl" />
               ))}
+            </div>
+          ) : isEmpty ? (
+            <div className="rounded-xl border bg-card p-8">
+              <EmptyState
+                icon={Sparkles}
+                title="Your workspace is empty"
+                description="Click 'Seed demo data' above to populate sample customers, leads, products and invoices so you can explore the dashboard."
+              />
             </div>
           ) : (
             <>
